@@ -89,7 +89,7 @@ export function EditarItem() {
   }, [sedeSeleccionada]);
 
   // Lógica de envío para editar el ítem
-  const onSubmit = (data) => {
+  const onSubmit = (data: any) => {
     const selectedItem = items.find(
       (item) => item.item.id.toString() === data.id
     );
@@ -335,34 +335,4 @@ export function EditarItem() {
       </Dialog>
     </div>
   );
-}
-
-// Funciones simuladas para el backend (editar y eliminar ítems)
-function updateItemInBackend(data) {
-  // Aquí iría la lógica para actualizar el ítem en el backend
-  // Devuelve 0 si tiene éxito, y otro valor si hay un error
-  try {
-    fetch(`https://gestion-83lw.onrender.com/items/${data.id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-
-    return 0; // Suceso
-  } catch (error) {
-    return 1; // Error
-  }
-}
-
-function deleteItemFromBackend(itemId) {
-  // Aquí iría la lógica para eliminar el ítem en el backend
-  // Devuelve 0 si tiene éxito, y otro valor si hay un error
-  try {
-    // Eliminar en el backend
-    return 0; // Suceso
-  } catch (error) {
-    return 1; // Error
-  }
 }

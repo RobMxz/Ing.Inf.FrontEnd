@@ -82,7 +82,6 @@ export function LogIn() {
         toast({
           title: "Error",
           description: "Credenciales incorrectas.",
-          status: "error",
         });
       }
     } catch (error) {
@@ -90,7 +89,6 @@ export function LogIn() {
       toast({
         title: "Error",
         description: "Ocurrió un error al intentar iniciar sesión.",
-        status: "error",
       });
     }
   }
