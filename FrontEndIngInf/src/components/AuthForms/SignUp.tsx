@@ -66,17 +66,8 @@ export function SignUp() {
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    let dateObj = new Date(data.fechaNacimiento);
-
-    // Obtener año, mes (recuerda que los meses en JavaScript son base 0), y día
-    let year = dateObj.getFullYear();
-    let month = String(dateObj.getMonth() + 1).padStart(2, "0"); // Sumar 1 porque enero es 0
-    let day = String(dateObj.getDate()).padStart(2, "0");
-
-    data.fechaNacimiento = `${year}-${month}-${day}`;
-
+    // `data.fechaNacimiento` is already a Date object
     console.log(data);
-
     console.log(JSON.stringify(data));
 
     try {
@@ -85,7 +76,11 @@ export function SignUp() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          ...data,
+          // Ensure fechaNacimiento is formatted correctly as a string for the API (ISO string format)
+          fechaNacimiento: data.fechaNacimiento.toISOString().split("T")[0], // format as 'YYYY-MM-DD'
+        }),
       });
     } catch (e) {
       console.log(e);
