@@ -16,8 +16,8 @@ import {
 
 export function VisualizarInventarioSede() {
   const [sedeSeleccionada, setSedeSeleccionada] = useState(""); // Almacenamos el ID de la sede
-  const [items, setItems] = useState([]);
-  const [sedes, setSedes] = useState([]);
+  const [items, setItems] = useState<any[]>([]);
+  const [sedes, setSedes] = useState<any[]>([]);
 
   // Efecto para cargar las sedes al iniciar el componente
   useEffect(() => {

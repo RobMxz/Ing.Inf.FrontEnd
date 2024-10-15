@@ -30,9 +30,9 @@ const FormSchema = z.object({
 
 export function AgregarItemSede() {
   const [sedeSeleccionada, setSedeSeleccionada] = useState(""); // Estado para sede seleccionada
-  const [itemSeleccionado, setItemSeleccionado] = useState(""); // Estado para ítem seleccionado
-  const [items, setItems] = useState([]);
-  const [sedes, setSedes] = useState([]);
+  const [, setItemSeleccionado] = useState(""); // Estado para ítem seleccionado
+  const [items, setItems] = useState<any[]>([]);
+  const [sedes, setSedes] = useState<any[]>([]);
   const { toast } = useToast();
   const form = useForm({
     resolver: zodResolver(FormSchema),
@@ -76,7 +76,7 @@ export function AgregarItemSede() {
 
   //function onSubmit(data)
   // Modificamos el onSubmit
-  function onSubmit(data) {
+  function onSubmit(data: any) {
     console.log("aaa", sedes[0].sede, data.sede);
     // Buscar el ítem y la sede seleccionados en las listas originales
     const selectedItem = items.find((item) => item.nombre === data.item);

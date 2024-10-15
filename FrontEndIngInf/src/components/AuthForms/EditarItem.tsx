@@ -42,8 +42,8 @@ export function EditarItem() {
   const [itemSeleccionado, setItemSeleccionado] = useState(""); // Estado para el ítem seleccionado
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false); // Estado para controlar el modal de eliminación
   const [sedeSeleccionada, setSedeSeleccionada] = useState(""); // Almacenamos el ID de la sede
-  const [items, setItems] = useState([]);
-  const [sedes, setSedes] = useState([]);
+  const [items, setItems] = useState<any[]>([]);
+  const [sedes, setSedes] = useState<any[]>([]);
 
   const form = useForm({
     resolver: zodResolver(EditItemSchema),
