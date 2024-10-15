@@ -1,10 +1,4 @@
-import {
-  Outlet,
-  RouterProvider,
-  createBrowserRouter,
-  useLocation,
-  useLoaderData,
-} from "react-router-dom";
+import { Outlet, RouterProvider, createBrowserRouter } from "react-router-dom";
 
 import { AgregarItemSede } from "./components/AuthForms/AgregarItemSede";
 import { LogIn } from "./components/AuthForms/LogIn";
@@ -12,7 +6,6 @@ import { SignUp } from "./components/AuthForms/SignUp";
 import { VisualizarInventarioSede } from "./components/AuthForms/VisualizarInventarioSede";
 import Header from "./components/Header";
 import { EditarItem } from "./components/AuthForms/EditarItem";
-import { Root } from "@radix-ui/react-slot";
 
 const router = createBrowserRouter([
   {
