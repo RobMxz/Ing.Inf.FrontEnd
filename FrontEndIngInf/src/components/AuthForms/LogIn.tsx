@@ -43,15 +43,56 @@ export function LogIn() {
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    try {
+      // Realiza la solicitud a la API para obtener los usuarios
+      const response = await fetch(
+        "https://gestion-83lw.onrender.com/api/usuarios",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(response);
+      if (!response.ok) {
+        throw new Error("Error al obtener los usuarios.");
+      }
+
+      // Convierte la respuesta a JSON
+      const usuarios = await response.json();
+      console.log(usuarios);
+      // Busca un usuario que coincida con el email y la contraseña ingresados
+      const usuarioValido = usuarios.find(
+        (usuario: { correo: string; usuario: string; contrasenia: string }) =>
+          (usuario.correo === data.usernameOrEmail ||
+            usuario.usuario === data.usernameOrEmail) &&
+          usuario.contrasenia === data.password
+      );
+
+      // Si se encuentra el usuario
+      if (usuarioValido) {
+        toast({
+          title: "Inicio de Sesión",
+          description: "Inicio de sesión exitoso.",
+        });
+      } else {
+        // Si no se encuentra el usuario, muestra un mensaje de error
+        toast({
+          title: "Error",
+          description: "Credenciales incorrectas.",
+          status: "error",
+        });
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast({
+        title: "Error",
+        description: "Ocurrió un error al intentar iniciar sesión.",
+        status: "error",
+      });
+    }
   }
 
   return (

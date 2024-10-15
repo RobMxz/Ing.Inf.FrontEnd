@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -30,6 +30,9 @@ const FormSchema = z.object({
 
 export function AgregarItemSede() {
   const [sedeSeleccionada, setSedeSeleccionada] = useState(""); // Estado para sede seleccionada
+  const [itemSeleccionado, setItemSeleccionado] = useState(""); // Estado para ítem seleccionado
+  const [items, setItems] = useState([]);
+  const [sedes, setSedes] = useState([]);
   const { toast } = useToast();
   const form = useForm({
     resolver: zodResolver(FormSchema),
@@ -39,14 +42,94 @@ export function AgregarItemSede() {
       cantidad: 1,
     },
   });
+
+  useEffect(() => {
+    // Efecto para cargar las sedes al iniciar el componente
+    const fetchSedes = async () => {
+      try {
+        const response = await fetch(
+          "https://gestion-83lw.onrender.com/api/sedes"
+        );
+        const data = await response.json();
+        setSedes(data);
+        console.log("sedes", sedes);
+      } catch (error) {
+        console.error("Error al obtener las sedes:", error);
+      }
+    };
+    fetchSedes();
+  }, []);
+
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        const response = await fetch(`https://gestion-83lw.onrender.com/items`);
+        const data = await response.json();
+        setItems(data);
+        console.log("items", items);
+      } catch (error) {
+        console.error("Error al obtener los ítems:", error);
+      }
+    };
+    fetchItems();
+  }, []);
+
   //function onSubmit(data)
+  // Modificamos el onSubmit
   function onSubmit(data) {
-    // Aquí agregarías la lógica para enviar los datos a tu backend
-    console.log("xd");
-    toast({
-      title: "Ítem agregado exitosamente",
-      description: `Ítem ${data.item} agregado a la sede ${data.sede} con cantidad ${data.cantidad}.`,
-    });
+    console.log("aaa", sedes[0].sede, data.sede);
+    // Buscar el ítem y la sede seleccionados en las listas originales
+    const selectedItem = items.find((item) => item.nombre === data.item);
+    const selectedSede = sedes.find((sede) => sede.sede === data.sede);
+
+    console.log("selectedItem", selectedItem);
+    console.log("selectedSede", selectedSede);
+
+    // Estructurar el objeto para el envío
+    const payload = {
+      id: 0, // Este ID será generado por tu backend, por lo general no lo incluyes aquí
+      item: {
+        id: selectedItem.id,
+        nombre: selectedItem.nombre,
+        descripcion: selectedItem.descripcion, // O el campo que necesites
+        imagenUrl: selectedItem.imagenUrl, // O el campo que necesites
+      },
+      sede: {
+        id: selectedSede.id,
+        sede: selectedSede.sede,
+      },
+      cantidad: data.cantidad,
+    };
+    console.log(payload);
+
+    // Hacer el envío a tu backend
+    fetch("https://gestion-83lw.onrender.com/api/items-sede", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload), // Convertir el objeto en JSON
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Error en la solicitud");
+        }
+        return response.json();
+      })
+      .then((result) => {
+        toast({
+          title: "Ítem agregado exitosamente",
+          description: `Ítem ${selectedItem.nombre} agregado a la sede ${selectedSede.sede} con cantidad ${data.cantidad}.`,
+        });
+        console.log("Resultado:", result);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        toast({
+          title: "Error",
+          description: "Ocurrió un error al agregar el ítem.",
+        });
+      });
   }
 
   return (
@@ -72,9 +155,11 @@ export function AgregarItemSede() {
                       <SelectValue placeholder="Seleccionar sede" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Sede 1">Sede 1</SelectItem>
-                      <SelectItem value="Sede 2">Sede 2</SelectItem>
-                      {/* Puedes agregar más sedes aquí */}
+                      {sedes.map((sede) => (
+                        <SelectItem key={sede.id} value={sede.sede}>
+                          {sede.sede}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </FormControl>
@@ -92,16 +177,21 @@ export function AgregarItemSede() {
                 <FormLabel>Ítem</FormLabel>
                 <FormControl>
                   <Select
-                    onValueChange={field.onChange}
-                    value={field.value} // Mantener el valor seleccionado
+                    onValueChange={(value) => {
+                      setItemSeleccionado(value); // Actualizamos el estado local
+                      field.onChange(value); // Informamos al formulario de React Hook Form
+                    }}
+                    value={field.value || ""} // Usamos field.value aquí para sincronizar con el formulario
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Seleccionar ítem" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Ítem 1">Ítem 1</SelectItem>
-                      <SelectItem value="Ítem 2">Ítem 2</SelectItem>
-                      {/* Puedes agregar más ítems aquí */}
+                      {items.map((item) => (
+                        <SelectItem key={item.id} value={item.nombre}>
+                          {item.nombre}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </FormControl>

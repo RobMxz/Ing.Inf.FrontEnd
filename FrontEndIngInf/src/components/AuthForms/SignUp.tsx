@@ -22,48 +22,75 @@ import { CalendarIcon } from "@radix-ui/react-icons";
 
 // Definimos el esquema de validación con Zod
 const FormSchema = z.object({
-  username: z.string().min(2, {
+  usuario: z.string().min(2, {
     message: "El nombre de usuario debe tener al menos 2 caracteres.",
   }),
-  nombres: z.string().min(2, {
+  nombre: z.string().min(2, {
     message: "Los nombres deben tener al menos 2 caracteres.",
   }),
-  apellidos: z.string().min(2, {
+  apellido: z.string().min(2, {
     message: "Los apellidos deben tener al menos 2 caracteres.",
   }),
   dni: z.string().length(8, {
     message: "El DNI debe tener exactamente 8 dígitos.",
   }),
-  dob: z.date({
+  fechaNacimiento: z.date({
     required_error: "Debe seleccionar una fecha de nacimiento.",
   }),
-  email: z.string().email({
+  correo: z.string().email({
     message: "Debe ser un correo válido.",
   }),
   telefono: z.string().min(9, {
     message: "El teléfono debe tener al menos 9 dígitos.",
   }),
-  password: z.string().min(6, {
+  contrasenia: z.string().min(6, {
     message: "La contraseña debe tener al menos 6 caracteres.",
   }),
+  id: z.number(),
 });
 
 export function SignUp() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      username: "",
-      nombres: "",
-      apellidos: "",
+      id: 0,
+      usuario: "",
+      nombre: "",
+      apellido: "",
       dni: "",
-      dob: undefined,
-      email: "",
+      fechaNacimiento: undefined,
+      correo: "",
       telefono: "",
-      password: "",
+      contrasenia: "",
     },
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
+    let dateObj = new Date(data.fechaNacimiento);
+
+    // Obtener año, mes (recuerda que los meses en JavaScript son base 0), y día
+    let year = dateObj.getFullYear();
+    let month = String(dateObj.getMonth() + 1).padStart(2, "0"); // Sumar 1 porque enero es 0
+    let day = String(dateObj.getDate()).padStart(2, "0");
+
+    data.fechaNacimiento = `${year}-${month}-${day}`;
+
+    console.log(data);
+
+    console.log(JSON.stringify(data));
+
+    try {
+      fetch("https://gestion-83lw.onrender.com/api/usuarios", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+    } catch (e) {
+      console.log(e);
+    }
+
     toast({
       title: "Registro",
       description: "Se ha registrado correctamente.",
@@ -80,7 +107,7 @@ export function SignUp() {
           {/* Campo para el nombre de usuario */}
           <FormField
             control={form.control}
-            name="username"
+            name="usuario"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Nombre de Usuario</FormLabel>
@@ -95,10 +122,10 @@ export function SignUp() {
             )}
           />
 
-          {/* Campo para nombres */}
+          {/* Campo para nombre */}
           <FormField
             control={form.control}
-            name="nombres"
+            name="nombre"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Nombres</FormLabel>
@@ -113,7 +140,7 @@ export function SignUp() {
           {/* Campo para apellidos */}
           <FormField
             control={form.control}
-            name="apellidos"
+            name="apellido"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Apellidos</FormLabel>
@@ -143,7 +170,7 @@ export function SignUp() {
           {/* Campo para la fecha de nacimiento */}
           <FormField
             control={form.control}
-            name="dob"
+            name="fechaNacimiento"
             render={({ field }) => (
               <FormItem className="flex flex-col">
                 <FormLabel>Fecha de Nacimiento</FormLabel>
@@ -187,7 +214,7 @@ export function SignUp() {
           {/* Campo para el correo */}
           <FormField
             control={form.control}
-            name="email"
+            name="correo"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Correo Electrónico</FormLabel>
@@ -221,7 +248,7 @@ export function SignUp() {
           {/* Campo para la contraseña */}
           <FormField
             control={form.control}
-            name="password"
+            name="contrasenia"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Contraseña</FormLabel>

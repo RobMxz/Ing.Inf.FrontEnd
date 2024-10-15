@@ -13,7 +13,7 @@ function App() {
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <Header />
       <Separator className="px-6" />
-      <AgregarItemSede />
+      <VisualizarInventarioSede />
     </ThemeProvider>
   );
 }
