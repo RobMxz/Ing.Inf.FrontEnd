@@ -26,6 +26,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { toast } from "../../hooks/use-toast";
+import { Label } from "@radix-ui/react-label";
 
 // Esquema de validación para la edición de un ítem
 const EditItemSchema = z.object({
@@ -67,6 +68,7 @@ export function EditarItem() {
       }
     };
     fetchSedes();
+    console.log(sedes);
   }, []);
 
   useEffect(() => {
@@ -198,6 +200,7 @@ export function EditarItem() {
     <div className="space-y-6 grid place-items-center mt-4 px-6 pl-3 text-left font-normal ">
       {/* Formulario para editar el ítem */}
       <div className="w-1/3 space-y-6 mb-2">
+        <Label>Seleccionar Sede</Label>
         {sedes.length > 0 ? (
           <Select value={sedeSeleccionada} onValueChange={setSedeSeleccionada}>
             <SelectTrigger>
